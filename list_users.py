@@ -29,12 +29,12 @@ def list_users():
                 user_list.append(data)
     df = pd.DataFrame(user_list, dtype='string')
     table_id = 'user_admin.all_users'
-    #df.to_gbq(table_id, project_id=project, if_exists='replace')
+    df.to_gbq(table_id, project_id=project, if_exists='replace')
     print("done")
 
 
 @functions_framework.http
-def run(a=None):
+def run():
     try:
         list_users()
         return "all good"
