@@ -29,9 +29,19 @@ def list_users():
                 user_list.append(data)
     df = pd.DataFrame(user_list, dtype='string')
     table_id = 'user_admin.all_users'
-    df.to_gbq(table_id, project_id=project, if_exists='replace')
+    #df.to_gbq(table_id, project_id=project, if_exists='replace')
     print("done")
 
 
+@functions_framework.http
+def run(a=None):
+    try:
+        list_users()
+        return "all good"
+    except Exception as e:
+        print(e)
+        return "all bad"
+
+
 if __name__ == '__main__':
-    list_users()
+    run()
