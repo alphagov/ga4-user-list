@@ -2,11 +2,10 @@ from google.analytics.admin import AnalyticsAdminServiceClient
 from google.analytics import admin_v1alpha
 import pandas as pd
 import functions_framework
+import re
 
 project = 'ga4-analytics-352613'
 analytics_client = AnalyticsAdminServiceClient()
-# bq_client = bigquery.Client(project=project)
-# parent = 'properties/294475112'
 
 
 @functions_framework.http
@@ -16,6 +15,14 @@ def list_users():
     accounts = analytics_client.list_accounts(request=request)
     user_list = []
     for account in accounts:
+        users = analytics_client.list_access_bindings(parent=account.name)
+        for user in users:
+            email = user.user
+            binding = user.name
+            roles = user.roles
+            property_id = re.search(r'accounts\/\d*', binding)
+            data = {'email': email, 'binding': binding, 'roles': roles, 'parent': property_id.group()}
+            user_list.append(data)
         request = admin_v1alpha.ListPropertiesRequest(
             filter=f"parent:{account.name}",)
         properties = analytics_client.list_properties(request=request)
@@ -25,7 +32,8 @@ def list_users():
                 email = user.user
                 binding = user.name
                 roles = user.roles
-                data = {'email': email, 'binding': binding, 'roles': roles}
+                property_id = re.search(r'properties\/\d*', binding)
+                data = {'email': email, 'binding': binding, 'roles': roles, 'parent': property_id.group()}
                 user_list.append(data)
     df = pd.DataFrame(user_list, dtype='string')
     table_id = 'user_admin.all_users'
@@ -34,7 +42,7 @@ def list_users():
 
 
 @functions_framework.http
-def run():
+def run(request=None):
     try:
         list_users()
         return "all good"
