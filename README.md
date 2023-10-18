@@ -16,5 +16,5 @@ This only lists users that have been granted access directly, it does not list o
 
 ### Environment variables needed
 These can be set in a `.env` file
+
 `GCP_PROJECT_ID` The project to host the Cloud Function and the BigQuery data
-`GA4_ENTITY` in the format `properties/123456` or `accounts/123456`
