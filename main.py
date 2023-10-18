@@ -3,8 +3,13 @@ from google.analytics import admin_v1alpha
 import pandas as pd
 import functions_framework
 import re
+import os
+from dotenv import load_dotenv
 
-project = 'ga4-analytics-352613'
+load_dotenv()
+
+
+PROJECT = os.getenv('GCP_PROJECT_ID')
 analytics_client = AnalyticsAdminServiceClient()
 
 
@@ -37,7 +42,7 @@ def list_users():
                 user_list.append(data)
     df = pd.DataFrame(user_list, dtype='string')
     table_id = 'user_admin.all_users'
-    df.to_gbq(table_id, project_id=project, if_exists='replace')
+    df.to_gbq(table_id, project_id=PROJECT, if_exists='replace')
     print("done")
 
 
