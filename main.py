@@ -10,6 +10,7 @@ load_dotenv()
 
 
 PROJECT = os.getenv('GCP_PROJECT_ID')
+
 analytics_client = AnalyticsAdminServiceClient()
 
 
